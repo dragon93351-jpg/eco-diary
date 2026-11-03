@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>에코 다이어리</title>
+  <style>
+    :root {
+      --green: #2f9e63;
+      --dark-green: #18794e;
+      --mint: #dff7e8;
+      --sky: #e8f7ff;
+      --cream: #fffdf4;
+      --yellow: #ffd75e;
+      --text: #26352c;
+      --card: #ffffff;
+      --line: #dce9df;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: Arial, "Noto Sans KR", sans-serif;
+      background: linear-gradient(180deg, #effff5, #f8fcf8);
+      color: var(--text);
+    }
+    button, input, select, textarea { font: inherit; }
+    button {
+      border: 0; cursor: pointer; border-radius: 14px; padding: 11px 14px;
+      background: var(--green); color: white; font-weight: 700;
+    }
+    button:hover { background: var(--dark-green); }
+    .app { max-width: 980px; margin: auto; padding: 18px 16px 105px; }
+    .page { display: none; animation: fade .25s ease; }
+    .page.active { display: block; }
+    @keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: none; } }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 22px;
+      padding: 18px; box-shadow: 0 7px 22px rgba(45, 100, 65, .08);
+      margin: 12px 0;
+    }
+    .hero {
+      background: linear-gradient(135deg, #d9f9e6, #e6f7ff);
+      border-radius: 28px; padding: 30px 22px; text-align: center;
+    }
+    .eco { font-size: 76px; margin: 8px; }
+    h1 { color: var(--dark-green); margin: 8px 0; }
+    h2 { font-size: 21px; margin-top: 0; color: var(--dark-green); }
+    h3 { margin: 6px 0; }
+    p { line-height: 1.55; }
+    .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .quick {
+      text-align: left; min-height: 115px; color: var(--text); background: white;
+      border: 1px solid var(--line); box-shadow: 0 4px 12px rgba(0,0,0,.04);
+    }
+    .quick span { font-size: 30px; display: block; margin-bottom: 7px; }
+    .muted { color: #607168; font-size: 14px; }
+    .point {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #fff7cc; border: 1px solid #f3df81; border-radius: 18px; padding: 14px;
+    }
+    .point strong { color: #9a6e00; font-size: 24px; }
+    .form-row { display: grid; gap: 8px; margin: 14px 0; }
+    input, select, textarea {
+      width: 100%; padding: 12px; border: 1px solid #bcd4c2;
+      border-radius: 12px; background: #fcfffc;
+    }
+    textarea { min-height: 130px; resize: vertical; }
+    .check {
+      display: flex; align-items: center; gap: 10px; padding: 10px;
+      border-bottom: 1px solid #edf2ee;
+    }
+    .check input { width: 20px; height: 20px; }
+    .quest { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+    .quest.done { background: #e5f8ec; }
+    .tag {
+      display: inline-block; padding: 4px 9px; border-radius: 20px;
+      background: var(--mint); color: var(--dark-green); font-size: 13px; font-weight: bold;
+    }
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 10;
+      display: flex; justify-content: center; gap: 2px; padding: 8px 4px;
+      background: rgba(255,255,255,.96); border-top: 1px solid var(--line);
+      overflow-x: auto;
+    }
+    .nav-btn {
+      background: transparent; color: #52625a; padding: 7px 9px; min-width: 66px;
+      font-size: 11px; border-radius: 10px;
+    }
+    .nav-btn.active, .nav-btn:hover { color: var(--dark-green); background: var(--mint); }
+    .nav-btn span { display: block; font-size: 19px; }
+    .chat {
+      height: 240px; overflow-y: auto; background: #f4fbf6; border-radius: 16px; padding: 12px;
+    }
+    .bubble { max-width: 80%; padding: 10px 12px; margin: 8px 0; border-radius: 15px; line-height: 1.45; }
+    .bot { background: white; border: 1px solid #d8eadc; }
+    .me { background: #c8f0d7; margin-left: auto; }
+    .chat-input { display: flex; gap: 8px; margin-top: 10px; }
+    .chat-input input { flex: 1; }
+    .game-card { background: #202a4a; color: white; border: 3px solid #72e5a1; }
+    .game-card h3 { color: #fff36d; }
+    .answer { display: block; width: 100%; text-align: left; margin: 8px 0; background: white; color: var(--text); border: 1px solid var(--line); }
+    .answer:hover { background: var(--mint); }
+    .avatar {
+      height: 180px; border-radius: 22px; display: grid; place-items: center;
+      font-size: 105px; background: linear-gradient(135deg, #d9f9e6, #b8e8ff);
+    }
+    .notice { padding: 11px; border-radius: 12px; background: var(--sky); font-size: 14px; }
+    .hidden { display: none; }
+    @media (max-width: 620px) {
+      .grid, .grid3 { grid-template-columns: 1fr; }
+      .hero { padding: 20px 15px; }
+      .app { padding-left: 12px; padding-right: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+
+    <!-- 시작 페이지 -->
+    <section id="welcome" class="page active">
+      <div class="hero">
+        <div class="eco">🤖🌱</div>
+        <h1>에코 다이어리</h1>
+        <p><b>우리 가족의 작은 실천이 지구를 웃게 해요!</b><br>
+          기록하고, 배우고, 즐기며 지구를 사랑해요.</p>
+        <button onclick="go('profile')">에코 다이어리 시작하기</button>
+      </div>
+      <div class="grid3">
+        <div class="card">📝<h3>실천 기록</h3><p class="muted">오늘의 친환경 활동을 적어요.</p></div>
+        <div class="card">🎮<h3>게임·퀴즈</h3><p class="muted">재미있게 환경을 배워요.</p></div>
+        <div class="card">💬<h3>에코봇</h3><p class="muted">환경 궁금증을 물어봐요.</p></div>
+      </div>
+    </section>
+
+    <!-- 정보 입력 -->
+    <section id="profile" class="page">
+      <div class="card">
+        <h1>반가워요! 👋</h1>
+        <p>에코 다이어리를 함께 시작해 볼까요?</p>
+        <div class="form-row">
+          <label>언어 선택</label>
+          <select id="language">
+            <option>한국어</option><option>English</option><option>日本語</option>
+            <option>中文</option><option>Español</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>이름 또는 별명</label>
+          <input id="name" placeholder="예: 지구지킴이" maxlength="20">
+        </div>
+        <div class="form-row">
+          <label>연령 모드</label>
+          <select id="age">
+            <option value="어린이">어린이</option>
+            <option value="청소년">청소년</option>
+            <option value="성인">성인</option>
+          </select>
+        </div>
+        <div class="notice">🤖 에코봇: 이름 대신 멋진 별명을 적어도 좋아요!</div><br>
+        <button onclick="saveProfile()">에코 다이어리 시작</button>
+      </div>
+    </section>
+
+    <!-- 홈 -->
+    <section id="home" class="page">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div><h1 style="font-size:28px">에코 다이어리</h1><p id="hello">오늘도 지구를 사랑해요!</p></div>
+          <div style="font-size:58px">🤖🌿</div>
+        </div>
+        <div class="point"><span>🌱 나의 누적 에코포인트</span><strong id="points">0P</strong></div>
+      </div>
+      <div class="card">
+        <h2>최근 실천 기록</h2>
+        <div id="recent">아직 기록이 없어요. 오늘의 퀘스트에 도전해 보세요!</div>
+      </div>
+      <div class="grid">
+        <button class="quick" onclick="go('quest')"><span>🌍</span>오늘의 일일 퀘스트</button>
+        <button class="quick" onclick="go('diary')"><span>📝</span>환경 일기</button>
+        <button class="quick" onclick="go('game')"><span>🕹️</span>환경 게임</button>
+        <button class="quick" onclick="go('quiz')"><span>❓</span>환경 퀴즈</button>
+        <button class="quick" onclick="go('character')"><span>🎨</span>내 에코 캐릭터</button>
+        <button class="quick" onclick="go('bot')"><span>💬</span>에코 챗봇</button>
+      </div>
+    </section>
+
+    <!-- 퀘스트 -->
+    <section id="quest" class="page">
+      <h1>오늘의 지구 사랑 퀘스트 🌍</h1>
+      <div id="questList"></div>
+      <div class="card">
+        <h2>나만의 환경 보호 목표</h2>
+        <input id="goal" placeholder="예: 양치할 때 물컵 사용하기">
+        <br><br><button onclick="saveGoal()">목표 저장하기</button>
+        <p id="goalView" class="muted"></p>
+      </div>
+      <div class="card">
+        <h2>실천 사진 올리기</h2>
+        <input type="file" accept="image/*" onchange="photoInfo(this)">
+        <p id="photoInfo" class="muted">사진을 올리면 관련 환경 실천 정보를 알려드려요.</p>
+      </div>
+    </section>
+
+    <!-- 일기 -->
+    <section id="diary" class="page">
+      <h1>오늘의 환경 일기 📝</h1>
+      <div class="card">
+        <h2>오늘 실천한 항목</h2>
+        <div id="diaryChecks"></div>
+      </div>
+      <div class="card">
+        <h2>오늘의 생각과 다짐</h2>
+        <textarea id="diaryText" placeholder="오늘 지구를 위해 내가 한 일은 무엇인가요? 내일은 어떤 실천을 해 보고 싶나요?"></textarea>
+        <br><br><input type="file" accept="image/*">
+        <br><br><button onclick="saveDiary()">오늘의 일기 저장하기 (+10P)</button>
+      </div>
+    </section>
+
+    <!-- 게임 -->
+    <section id="game" class="page">
+      <h1>에코 오락실 🕹️</h1>
+      <p>게임을 하면서 환경을 재미있게 배워요!</p>
+      <div class="grid">
+        <div class="card game-card"><h3>♻️ 분리수거 대작전</h3><p>물건을 알맞은 재활용 통에 넣어 보세요.</p><button onclick="playGame('분리수거 대작전')">게임 시작 (+15P)</button></div>
+        <div class="card game-card"><h3>🧹 쓰레기를 모아라!</h3><p>공원을 깨끗하게 만드는 게임이에요.</p><button onclick="playGame('쓰레기를 모아라!')">게임 시작 (+15P)</button></div>
+        <div class="card game-card"><h3>💡 지구 AI 만들기</h3><p>에너지 절약 퍼즐을 해결해요.</p><button onclick="playGame('지구 AI 만들기')">게임 시작 (+15P)</button></div>
+      </div>
+      <div class="notice">🤖 에코봇: 게임에서는 점수보다 환경을 배우는 즐거움이 더 중요해요!</div>
+    </section>
+
+    <!-- 퀴즈 -->
+    <section id="quiz" class="page">
+      <h1>지구 박사 퀴즈 ❓</h1>
+      <div class="card">
+        <span class="tag">오늘의 퀴즈</span>
+        <h2>페트병을 버리기 전에 가장 먼저 하면 좋은 일은 무엇일까요?</h2>
+        <button class="answer" onclick="answerQuiz(false)">① 그냥 쓰레기통에 넣는다</button>
+        <button class="answer" onclick="answerQuiz(true)">② 내용물을 비우고 깨끗이 헹군다</button>
+        <button class="answer" onclick="answerQuiz(false)">③ 뚜껑을 열지 않고 버린다</button>
+        <p id="quizResult"></p>
+      </div>
+      <div class="card"><h2>퀴즈와 함께 알아보기</h2>
+        <p>페트병은 내용물을 비우고 헹군 뒤, 라벨과 뚜껑을 가능한 한 분리하면 재활용에 도움이 됩니다.</p>
+      </div>
+    </section>
+
+    <!-- 캐릭터 -->
+    <section id="character" class="page">
+      <h1>나만의 에코 캐릭터 🎨</h1>
+      <div class="card">
+        <div class="avatar" id="avatar">🧒🌱</div>
+        <h2>에코 상점</h2>
+        <div class="grid">
+          <button onclick="buy('🌿', 30)">잎사귀 모자 · 30P</button>
+          <button onclick="buy('🎒', 50)">재활용 가방 · 50P</button>
+          <button onclick="buy('🌻', 40)">꽃 배지 · 40P</button>
+          <button onclick="buy('🌍', 70)">지구 친구 · 70P</button>
+        </div>
+      </div>
+      <div class="card">
+        <h2>포인트가 부족한가요?</h2>
+        <p>오늘의 퀘스트, 환경 일기, 게임과 퀴즈에 참여해 포인트를 모아 보세요.</p>
+        <input type="file" accept="image/*" onchange="photoInfo(this)">
+      </div>
+    </section>
+
+    <!-- 챗봇 -->
+    <section id="bot" class="page">
+      <h1>에코봇에게 물어보세요! 🤖</h1>
+      <div class="grid">
+        <div class="card">
+          <div id="chat" class="chat">
+            <div class="bubble bot">안녕하세요! 저는 에코봇이에요. 분리배출, 물 절약, 기후 변화가 궁금하면 물어보세요.</div>
+          </div>
+          <div class="chat-input">
+            <input id="chatText" placeholder="예: 물을 아끼는 방법 알려줘" onkeydown="if(event.key==='Enter')sendChat()">
+            <button onclick="sendChat()">보내기</button>
+          </div>
+        </div>
+        <div class="card">
+          <h2>자주 하는 질문</h2>
+          <button onclick="quickChat('페트병은 어떻게 버리나요?')">페트병은 어떻게 버리나요?</button><br><br>
+          <button onclick="quickChat('물을 아끼는 방법 알려줘')">물을 아끼는 방법</button><br><br>
+          <button onclick="quickChat('탄소 발자국이 무엇인가요?')">탄소 발자국이란?</button>
+          <hr>
+          <h2>오늘의 환경 상식</h2>
+          <p>사용하지 않는 전등을 끄는 작은 습관도 에너지를 아끼는 데 도움이 됩니다.</p>
+          <span class="tag">SDGs 12 · 13 · 14 · 15</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn" onclick="go('home')"><span>🏠</span>홈</button>
+    <button class="nav-btn" onclick="go('quest')"><span>🌍</span>퀘스트</button>
+    <button class="nav-btn" onclick="go('diary')"><span>📝</span>일기</button>
+    <button class="nav-btn" onclick="go('game')"><span>🕹️</span>게임</button>
+    <button class="nav-btn" onclick="go('quiz')"><span>❓</span>퀴즈</button>
+    <button class="nav-btn" onclick="go('character')"><span>🎨</span>캐릭터</button>
+    <button class="nav-btn" onclick="go('bot')"><span>🤖</span>에코봇</button>
+  </nav>
+
+  <script>
+    const state = JSON.parse(localStorage.getItem("ecoDiary")) || {
+      name: "", age: "어린이", points: 0, quests: [], diarySaved: false, quizDone: false
+    };
+
+    const quests = [
+      ["💧", "물을 아껴 사용하기", 15],
+      ["💡", "사용하지 않는 전등 끄기", 10],
+      ["♻️", "재활용품 바르게 분리배출하기", 20]
+    ];
+
+    const diaryItems = ["대중교통 이용", "텀블러 사용", "음식물 쓰레기 줄이기", "전기 절약", "물 절약", "분리배출", "자연 보호 활동"];
+
+    function save() {
+      localStorage.setItem("ecoDiary", JSON.stringify(state));
+      updateUI();
+    }
+
+    function go(id) {
+      document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      window.scrollTo(0, 0);
+      updateUI();
+    }
+
+    function updateUI() {
+      document.getElementById("points").textContent = state.points + "P";
+      document.getElementById("hello").textContent =
+        state.name ? `${state.name}님, 오늘도 지구를 위한 멋진 하루예요!` : "오늘도 지구를 사랑해요!";
+
+      document.getElementById("recent").textContent =
+        state.quests.length ? `최근 기록: ${state.quests.map(i => quests[i][1]).join(", ")} 실천 완료!` :
+        "아직 기록이 없어요. 오늘의 퀘스트에 도전해 보세요!";
+
+      document.getElementById("questList").innerHTML = quests.map((q, i) => `
+        <div class="card quest ${state.quests.includes(i) ? "done" : ""}">
+          <div><span style="font-size:30px">${q[0]}</span>
+          <b>${q[1]}</b><br><span class="muted">완료하면 +${q[2]}P</span></div>
+          <button ${state.quests.includes(i) ? "disabled" : ""} onclick="completeQuest(${i})">
+            ${state.quests.includes(i) ? "완료!" : "도전하기"}
+          </button>
+        </div>`).join("");
+
+      document.getElementById("diaryChecks").innerHTML = diaryItems.map(x =>
+        `<label class="check"><input type="checkbox"> ${x}</label>`).join("");
+    }
+
+    function saveProfile() {
+      state.name = document.getElementById("name").value.trim() || "지구지킴이";
+      state.age = document.getElementById("age").value;
+      save(); go("home");
+    }
+
+    function addPoints(n) { state.points += n; save(); }
+
+    function completeQuest(i) {
+      if (!state.quests.includes(i)) {
+        state.quests.push(i); addPoints(quests[i][2]);
+        alert(`퀘스트 완료! ${quests[i][2]}포인트를 받았어요.`);
+      }
+    }
+
+    function saveGoal() {
+      const goal = document.getElementById("goal").value.trim();
+      document.getElementById("goalView").textContent = goal ? `🌱 나의 목표: ${goal}` : "";
+    }
+
+    function photoInfo(input) {
+      if (input.files[0]) {
+        document.getElementById("photoInfo").textContent =
+          "📷 사진을 확인했어요! 실천 사진을 올릴 때는 다른 사람의 얼굴이나 개인정보가 보이지 않도록 조심해요.";
+      }
+    }
+
+    function saveDiary() {
+      if (!state.diarySaved) {
+        state.diarySaved = true; addPoints(10);
+        alert("환경 일기가 저장되었어요! +10P");
+      } else alert("오늘의 일기는 이미 저장했어요. 멋진 실천을 계속 이어가요!");
+    }
+
+    function playGame(name) {
+      addPoints(15);
+      alert(`${name} 완료! 환경을 배우며 15포인트를 얻었어요.`);
+    }
+
+    function answerQuiz(correct) {
+      const result = document.getElementById("quizResult");
+      if (correct) {
+        result.textContent = "🎉 정답이에요! 깨끗한 페트병은 재활용에 더 도움이 됩니다.";
+        if (!state.quizDone) { state.quizDone = true; addPoints(20); }
+      } else {
+        result.textContent = "괜찮아요! 내용물을 비우고 깨끗이 헹군 뒤 분리배출하는 것이 좋아요.";
+      }
+    }
+
+    function buy(item, price) {
+      if (state.points < price) return alert(`포인트가 ${price - state.points}P 더 필요해요!`);
+      state.points -= price;
+      document.getElementById("avatar").textContent = "🧒" + item;
+      save();
+      alert(`${item} 아이템을 장착했어요!`);
+    }
+
+    function quickChat(text) {
+      document.getElementById("chatText").value = text;
+      sendChat();
+    }
+
+    function sendChat() {
+      const input = document.getElementById("chatText");
+      const text = input.value.trim();
+      if (!text) return;
+      const chat = document.getElementById("chat");
+      chat.innerHTML += `<div class="bubble me">${text}</div>`;
+
+      let reply = "좋은 질문이에요! 가까운 곳에서 할 수 있는 작은 환경 실천부터 시작해 보세요.";
+      if (text.includes("페트병")) reply = "페트병은 내용물을 비우고 가볍게 헹군 뒤, 라벨과 뚜껑을 분리해 배출하면 좋아요.";
+      if (text.includes("물")) reply = "양치할 때 컵을 사용하고, 손에 비누칠을 할 때는 수도꼭지를 잠가 보세요.";
+      if (text.includes("탄소")) reply = "탄소 발자국은 우리가 생활하며 만드는 온실가스의 양을 뜻해요. 걷기, 대중교통, 전기 절약으로 줄일 수 있어요.";
+      if (text.includes("분리")) reply = "분리배출 전에는 내용물을 비우고, 재질별로 나누는 것이 중요해요. 지역 규칙도 확인해 보세요.";
+
+      setTimeout(() => {
+        chat.innerHTML += `<div class="bubble bot">🤖 에코봇: ${reply}</div>`;
+        chat.scrollTop = chat.scrollHeight;
+      }, 300);
+      input.value = "";
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    updateUI();
+  </script>
+</body>
+</html>
